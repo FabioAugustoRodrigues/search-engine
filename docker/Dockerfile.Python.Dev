@@ -1,0 +1,32 @@
+FROM alpine:3.18
+
+COPY . /srv
+WORKDIR /srv
+
+RUN apk add \
+	python3 \
+	py3-pip \
+    redis
+
+RUN pip3 install virtualenv && \
+	virtualenv .venv
+
+RUN . /srv/.venv/bin/activate && \
+	pip install \
+	fastapi \
+	uvicorn \
+	python-dotenv \
+	pydantic \
+	pyjwt \
+	passlib \
+	pymysql \
+	cryptography \
+	redis \
+	redisearch \
+	pytest \
+	httpx \
+	pytest-asyncio \
+	&& deactivate
+
+ENTRYPOINT . /srv/.venv/bin/activate && \
+	uvicorn main:app --reload --host 0.0.0.0
