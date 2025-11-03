@@ -6,7 +6,6 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.Python.Dev
-      network: host
     restart: unless-stopped
     ports:
       - 8400:8000
