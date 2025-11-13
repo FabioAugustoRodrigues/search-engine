@@ -1,4 +1,5 @@
 from app.infrastructure.providers.redis_provider import RedisProvider
+from app.domain.exceptions.domain_exception import SchemaAlreadyExistsError
 
 class SchemaService:
     def __init__(self, redis_provider: RedisProvider):
@@ -6,7 +7,7 @@ class SchemaService:
 
     def create_schema(self, schema):
         if self.get_schema_by_name(schema.name) is not None:
-            return "Schema already exists"
+            raise SchemaAlreadyExistsError(schema.name)
         
         return self.set_schema_by_name(schema.name, schema.json())
 

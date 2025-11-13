@@ -1,10 +1,12 @@
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
 from app.api.v1.schema import router as schema_api
 
 from app.core.clients import create_redis_client, close_redis_client
 from app.core.settings import settings
+from app.domain.exceptions.domain_exception import DomainException
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -24,3 +26,17 @@ app = FastAPI(
 )
 
 app.include_router(schema_api, prefix="/api/v1/schemas", tags=["Schemas"])
+
+@app.exception_handler(DomainException)
+async def handle_domain_exception(_, exc: DomainException):
+    """
+    Handles all domain-level exceptions raised by services.
+    Returns a consistent JSON error response.
+    """
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error": exc.error_code,
+            "detail": str(exc),
+        },
+    )
