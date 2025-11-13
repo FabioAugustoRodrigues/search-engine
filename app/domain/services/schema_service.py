@@ -5,7 +5,18 @@ class SchemaService:
         self._redis_provider = redis_provider
 
     def create_schema(self, schema):
-        self._redis_provider.set("example_key", "example_value", ex=3600)
-        value = self._redis_provider.get("example_key")
+        if self.get_schema_by_name(schema.name) is not None:
+            return "Schema already exists"
+        
+        return self.set_schema_by_name(schema.name, schema.json())
 
-        return value
+    def get_schema_by_name(self, name):
+        schema_name = self._generate_schema_key(name)
+        return self._redis_provider.get(schema_name)
+
+    def set_schema_by_name(self, name, value):
+        schema_name = self._generate_schema_key(name)
+        return self._redis_provider.set(schema_name, value)
+    
+    def _generate_schema_key(self, schema_name):
+        return f"schema:{schema_name}"
