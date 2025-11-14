@@ -20,6 +20,13 @@ class SchemaService:
         
         return schema.name
 
+    def get_schemas(self):
+        """
+        Retrieves all schemas from Redis.
+        """
+        prefix = "schema"
+        return self._redis_provider.list_all(prefix)
+
     def get_schema_by_name(self, name):
         """
         Retrieves a schema from Redis by its name.

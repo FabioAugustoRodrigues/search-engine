@@ -17,6 +17,19 @@ class RedisProvider:
         """Store a key-value pair in Redis, optionally with expiration time."""
         return bool(self._client.set(key, value, ex=ex))
 
+    def list_all(self, prefix: str) -> list[str]:
+        """Return all Redis keys that start with the given prefix using SCAN (non-blocking)."""
+        cursor = 0
+        keys = []
+
+        while True:
+            cursor, batch = self._client.scan(cursor=cursor, match=f"{prefix}:*", count=100)
+            keys.extend(batch)
+            if cursor == 0:
+                break
+
+        return [k.decode() if isinstance(k, bytes) else k for k in keys]
+
     def get(self, key: str) -> Optional[str]:
         """Retrieve a value from Redis by key."""
         return self._client.get(key)

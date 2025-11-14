@@ -17,3 +17,9 @@ def create_schema(
         "message": "Schema created successfully",
         "schema_name": value
     }
+
+@router.get("/")
+def get_schemas(
+    schema_service: SchemaService = Depends(get_schema_service)
+):
+    return schema_service.get_schemas()
