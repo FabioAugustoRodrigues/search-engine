@@ -1,20 +1,24 @@
 from app.infrastructure.providers.redis_provider import RedisProvider
-from app.domain.exceptions.domain_exception import SchemaAlreadyExistsError
+from app.domain.exceptions.domain_exception import SchemaAlreadyExistsError, ErrorWhileCreatingSchema
 
 class SchemaService:
     def __init__(self, redis_provider: RedisProvider):
         self._redis_provider = redis_provider
 
-    def create_schema(self, schema):
+    def create_schema(self, schema) -> str:
         """
         Create a schema in Redis, given a CreateSchemaRequest instance.
         
         Raises a SchemaAlreadyExistsError if a schema with the same name already exists.
+        Raises an ErrorWhileCreatingSchema if there is an error while creating the schema.
         """
         if self.get_schema_by_name(schema.name) is not None:
             raise SchemaAlreadyExistsError(schema.name)
+
+        if not self.set_schema_by_name(schema.name, schema.json()):
+            raise ErrorWhileCreatingSchema(schema.name)
         
-        return self.set_schema_by_name(schema.name, schema.json())
+        return schema.name
 
     def get_schema_by_name(self, name):
         """

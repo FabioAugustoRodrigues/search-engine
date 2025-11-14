@@ -20,3 +20,13 @@ class SchemaAlreadyExistsError(DomainException):
     def __init__(self, schema_name: str):
         message = f"Schema '{schema_name}' already exists."
         super().__init__(message)
+
+class ErrorWhileCreatingSchema(DomainException):
+    """Exception raised when an error occurs while creating a schema."""
+
+    status_code = 500
+    error_code = "error_while_creating_schema"
+
+    def __init__(self, schema_name: str):
+        message = f"There was an error while creating schema '{schema_name}'."
+        super().__init__(message)

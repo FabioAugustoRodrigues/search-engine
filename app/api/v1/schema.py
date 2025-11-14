@@ -15,5 +15,5 @@ def create_schema(
     
     return {
         "message": "Schema created successfully",
-        "redis_value": value
+        "schema_name": value
     }
