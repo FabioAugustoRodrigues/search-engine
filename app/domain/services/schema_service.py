@@ -31,7 +31,7 @@ class SchemaService:
         fields = data["fields"] 
 
         self._redis_search_provider.create_index(
-            self._generate_schema_key(schema.name), 
+            self._generate_index_name(schema.name), 
             fields
         )
         
@@ -48,18 +48,18 @@ class SchemaService:
         """
         Retrieves a schema from Redis by its name.
         """
-        schema_name = self._generate_schema_key(name)
+        schema_name = self._generate_index_name(name)
         return self._redis_provider.get(schema_name)
 
     def set_schema_by_name(self, name, value):
         """
         Stores a schema in Redis by its name.
         """
-        schema_name = self._generate_schema_key(name)
+        schema_name = self._generate_index_name(name)
         return self._redis_provider.set(schema_name, value)
     
-    def _generate_schema_key(self, schema_name):
+    def _generate_index_name(self, schema_name):
         """
-        Generates a Redis key for a schema based on its name.
+        Generates a Redis Index Name for a schema based on its name.
         """
-        return f"schema:{schema_name}"
+        return f"idx:{schema_name}"
