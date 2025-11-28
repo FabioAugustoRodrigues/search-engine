@@ -48,6 +48,12 @@ class DocumentService:
         return str(uuid.uuid4())
 
     def _check_for_fields(self, schema_fields: str, document_fields: dict):
+        """
+        Check if the document fields match the schema fields.
+
+        Raises an InvalidFieldError exception if there are extra fields in the document
+        that are not in the schema, or if there are missing fields in the document that are in the schema.
+        """
         extra, missing = validate_fields(document_fields, schema_fields)
 
         if extra:
