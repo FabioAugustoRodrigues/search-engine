@@ -1,6 +1,5 @@
 from app.infrastructure.providers.redis_provider import RedisProvider
 from app.infrastructure.providers.redis_search_provider import RedisSearchProvider
-from app.domain.exceptions.domain_exception import SchemaNotFoundError
 
 from .schema_service import SchemaService
 
@@ -21,13 +20,9 @@ class DocumentService:
     def index_document(self, schema_name: str, document_fields: dict) -> str:
         """
         Index a document in RedisSearch under the given schema.
-        Raises SchemaNotFoundError if the schema doesn't exist.
         """
-        existing_schema = self._schema_service.get_schema_by_name(schema_name)
-        if existing_schema is None:
-            raise SchemaNotFoundError(schema_name)
-
-        schema = json.loads(existing_schema)
+        schema_json = self._schema_service.get_schema_by_name_or_fail(schema_name)
+        schema = json.loads(schema_json)
         schema_fields = schema["fields"]
 
         schema_index = self._schema_service._generate_index_name(schema_name)

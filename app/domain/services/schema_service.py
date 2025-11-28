@@ -51,6 +51,16 @@ class SchemaService:
         schema_name = self._generate_index_name(name)
         return self._redis_provider.get(schema_name)
 
+    def get_schema_by_name_or_fail(self, name):
+        """
+        Retrieves a schema from Redis by its name. If the schema doesn't exist, 
+        raises a SchemaNotFoundError exception.
+        """
+        schema = self.get_schema_by_name(name)
+        if schema is None:
+            raise SchemaNotFoundError(name)
+        return schema
+
     def set_schema_by_name(self, name, value):
         """
         Stores a schema in Redis by its name.
