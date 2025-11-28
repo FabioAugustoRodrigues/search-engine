@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
 from app.api.v1.schema import router as schema_api
+from app.api.v1.document import router as document_api
 
 from app.core.clients import create_redis_client, close_redis_client
 from app.core.settings import settings
@@ -33,6 +34,7 @@ app = FastAPI(
 
 # --- Register routers ---
 app.include_router(schema_api, prefix="/api/v1/schemas", tags=["Schemas"])
+app.include_router(document_api, prefix="/api/v1/documents", tags=["Documents"])
 
 
 

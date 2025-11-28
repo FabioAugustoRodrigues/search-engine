@@ -30,3 +30,13 @@ class ErrorWhileCreatingSchema(DomainException):
     def __init__(self, schema_name: str):
         message = f"There was an error while creating schema '{schema_name}'."
         super().__init__(message)
+
+class SchemaNotFoundError(DomainException):
+    """Exception raised when a schema is not found."""
+
+    status_code = 404
+    error_code = "schema_not_found"
+
+    def __init__(self, schema_name: str):
+        message = f"Schema '{schema_name}' not found."
+        super().__init__(message)

@@ -47,3 +47,12 @@ class RedisSearchProvider:
             )
         except Exception as e:
             pass
+
+    def add_document(self, index_name: str, document_id: str, fields: dict):
+        client = Client(index_name, conn=self._client)
+        try:
+            client.redis.hset(f"{index_name}:{document_id}", mapping=fields)
+
+            return f"{index_name}:{document_id}"
+        except Exception as e:
+            pass

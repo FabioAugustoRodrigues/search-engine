@@ -3,6 +3,7 @@ from fastapi import Request, Depends
 from app.infrastructure.providers.redis_provider import RedisProvider
 from app.infrastructure.providers.redis_search_provider import RedisSearchProvider
 from app.domain.services.schema_service import SchemaService
+from app.domain.services.document_service import DocumentService
 
 
 def get_redis_provider(request: Request) -> RedisProvider:
@@ -39,3 +40,17 @@ def get_schema_service(
     in route handlers.
     """
     return SchemaService(redis_provider, redis_search_provider)
+
+def get_document_service(
+    redis_provider: RedisProvider = Depends(get_redis_provider),
+    redis_search_provider: RedisSearchProvider = Depends(get_redis_search_provider),
+    schema_service: SchemaService = Depends(get_schema_service)
+):
+    """
+    Dependency function that provides a DocumentService instance.
+
+    This function retrieves a SchemaService + RedisProvider + RedisSearchProvider instance
+    and returns a DocumentService instance. This allows for dependency injection 
+    in route handlers.
+    """
+    return DocumentService(redis_provider, redis_search_provider, schema_service)
