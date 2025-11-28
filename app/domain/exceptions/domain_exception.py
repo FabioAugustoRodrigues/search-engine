@@ -40,3 +40,12 @@ class SchemaNotFoundError(DomainException):
     def __init__(self, schema_name: str):
         message = f"Schema '{schema_name}' not found."
         super().__init__(message)
+
+class InvalidFieldError(DomainException):
+    """Exception raised when a field is invalid."""
+
+    status_code = 400
+    error_code = "invalid_field"
+
+    def __init__(self, message):
+        super().__init__(message)

@@ -1,7 +1,11 @@
 from app.infrastructure.providers.redis_provider import RedisProvider
 from app.infrastructure.providers.redis_search_provider import RedisSearchProvider
 
+from app.domain.exceptions.domain_exception import InvalidFieldError
+
 from .schema_service import SchemaService
+
+from app.validators.fields_validator import validate_fields
 
 import uuid
 import json
@@ -25,6 +29,8 @@ class DocumentService:
         schema = json.loads(schema_json)
         schema_fields = schema["fields"]
 
+        self._check_for_fields(schema_fields, document_fields)
+
         schema_index = self._schema_service._generate_index_name(schema_name)
         document_id = self._generate_document_id()
 
@@ -40,3 +46,14 @@ class DocumentService:
         Generate a unique document ID.
         """
         return str(uuid.uuid4())
+
+    def _check_for_fields(self, schema_fields: str, document_fields: dict):
+        extra, missing = validate_fields(document_fields, schema_fields)
+
+        if extra:
+            extra_fields = ", ".join(extra)
+            raise InvalidFieldError(message=f"There are extra fields in the document that are not in the schema: {extra_fields}.")
+
+        if missing:
+            missing_fields = ", ".join(missing)
+            raise InvalidFieldError(message=f"There are missing fields in the document that are in the schema: {missing_fields}.")
